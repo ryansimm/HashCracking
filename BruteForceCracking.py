@@ -1,4 +1,5 @@
 import hashlib
+
 hashes = [
 'f14aae6a0e050b74e4b7b9a5b2ef1a60ceccbbca39b132ae3e8bf88d3a946c6d8687f3266fd2b626419d8b67dcf1d8d7c0fe72d4919d9bd05efbd37070cfb41a',
 'e85e639da67767984cebd6347092df661ed79e1ad21e402f8e7de01fdedb5b0f165cbb30a20948f1ba3f94fe33de5d5377e7f6c7bb47d017e6dab6a217d6cc24',
@@ -8,16 +9,26 @@ hashes = [
 charset = 'abcdefghijklmnopqrstuvwxyz0123456789' # possible characters in the password
 cracked = {} # dictionary that stores the cracked hashes
 
-# depth first search recursively
+#error handling incase no hashes are found or charset is empty
+if not hashes:
+    print('No hashes to crack')
+    exit()
+
+if not charset:
+    raise ValueError('Character set cannot be empty')
+    
+# depth first search recursively, builds possible passwords character by character
 def crack_pass(current, max_len):
+    if len(cracked) == len(hashes):
+        return
     if len(current) > max_len:
         return
-    
-    hash = hashlib.sha512(current.encode()).hexdigest()
-    if hash in hashes:
-        cracked[hash] = current
+    if len(current) > 0: # only search non-empty passwords (a valid password has atleast 1 value)
+        hash = hashlib.sha512(current.encode()).hexdigest()
+        if hash in hashes:
+            cracked[hash] = current
         
-    # done recursively because itertools.product makes it too easy :( 
+    # search through each character in the character set, done recursively because itertools.product makes it too easy :( 
     for c in charset:
         crack_pass(current + c, max_len)
 
@@ -27,7 +38,9 @@ while len(cracked) <len(hashes):
     crack_pass('', max_len)
     max_len += 1
 
-print('Passwords =' , list(cracked.values()))
-
+# print results (both number of cracked passwords and the passwords themselves)
+print(f'cracked {len(cracked)} / {len(hashes)} passwords:')
+for pwd in cracked.values():
+    print(pwd)
 
 

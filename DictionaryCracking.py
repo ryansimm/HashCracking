@@ -12,6 +12,10 @@ hashes = [
     '1830a3dfe79e29d30441f8d736e2be7dbc3aa912f11abbffb91810efeef1f60426c31b6d666eadd83bbba2cc650d8f9a6393310b84e2ef02efa9fe161bf8f41d',
     '3b46175f10fdb54c7941eca89cc813ddd8feb611ed3b331093a3948e3ab0c3b141ff6a7920f9a068ab0bf02d7ddaf2a52ef62d8fb3a6719cf25ec6f0061da791'
 ]
+#error handling incase no hashes are found
+if not hashes:
+    print('No hashes to crack')
+    exit()
 
 cracked = {} # dictionary that stores the cracked hashes
 start = time.time() # start timer
@@ -22,6 +26,11 @@ hash_dict = {i :value for i, value in enumerate(hashes)}
 with open('PasswordDictionary.txt', 'r') as file:
     pass_list = [line.strip() for line in file if line.strip()]
 
+# error handling in case file is empty or not found
+if file is None or len(pass_list) == 0:
+    print("Password dictionary file is empty or not found.")
+    exit()
+
 # loop through each password in the dictionary (dictionary attack)
 for pword in pass_list:
     hash_pass = hashlib.sha512(pword.encode()).hexdigest()
@@ -31,5 +40,9 @@ for pword in pass_list:
 end = time.time() # end timer
 total_time = end - start
 
-print('Passwords =' , list(cracked.values()))
+# print results (both number of cracked passwords and the passwords themselves)
+print(f'cracked {len(cracked)} / {len(hashes)} passwords:')
+for pword in cracked.values():
+    print(pword)
+# How long it took to crack the passwords
 print("Time taken to crack passwords: ", total_time, "seconds")
