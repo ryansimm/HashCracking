@@ -11,19 +11,38 @@ salted_hashes = [
     ('6f5ad32136a430850add25317336847005e72a7cfe4e90ce9d86b89d87196ff6566322d11c13675906883c8072a66ebe87226e2bc834ea523adbbc88d2463ab3', '894c88a4'),
     ('21a60bdd58abc97b1c3084ea8c89aeaef97d682c543ff6edd540040af20b5db228fbce66fac962bdb2b2492f40dd977a944f1c25bc8243a4061dfeeb02ab721e', '4c8f1a45')
 ]
-
+# error handling for if hashes arent found
+if not salted_hashes:
+    print('No salted hashes to crack')
+    exit()
 cracked = {} # dictionary that stores cracked hashes
 
 # Dictionary Attack file read
 with open('PasswordDictionary.txt', 'r') as file:
     pass_list = [line.strip() for line in file if line.strip()]
 
+if file is None or len(pass_list) == 0:
+    print("Password dictionary file is empty or not found.")
+    exit()
+
 # loop through each salted hash and each password in the dictionary
 for hash_val, salt in salted_hashes:
     for pword in pass_list:
         salt_input = pword + salt # concatenate the salt to the possible password
         hash_pass = hashlib.sha512(salt_input.encode()).hexdigest()
+        
         if hash_pass == hash_val:
             cracked[hash_val] = pword
+            if hash_val in cracked:
+                break  # Exit inner loop if hash is cracked
 
-print('Passwords =', list(cracked.values()))
+    if hash_val in cracked:
+        continue  # Exit outer loop if hash is cracked
+
+    if len(cracked) == len(salted_hashes):
+        break # exit all loops if all of the hashes are cracked
+
+# print results (both number of cracked passwords and the passwords themselves)
+print(f'Cracked {len(cracked)} / {len(salted_hashes)} passwords:')
+for pword in cracked.values():
+    print(pword)

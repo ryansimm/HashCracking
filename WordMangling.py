@@ -7,6 +7,11 @@ cracked = {} # dictionary that stores the cracked hashes
 with open('PasswordDictionary.txt', 'r') as file:
     pass_list = [line.strip() for line in file if line.strip()]
 
+# error handling in case file is empty or not found
+if file is None or len(pass_list == 0):
+    print("Password dictionary file is empty or not found.")
+    exit()
+
 # convert letters to leetspeak - common substitutions taken from https://www.gamehouse.com/blog/leet-speak-cheat-sheet/
 def leetspeak(word):
     leet_dict = {'a': '4', 'A': '4',
