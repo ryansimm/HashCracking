@@ -8,8 +8,8 @@ with open('PasswordDictionary.txt', 'r') as file:
     pass_list = [line.strip() for line in file if line.strip()]
 
 # error handling in case file is empty or not found
-if file is None or len(pass_list == 0):
-    print("Password dictionary file is empty or not found.")
+if file is None:
+    print("Password dictionary file is not found.")
     exit()
 
 # convert letters to leetspeak - common substitutions taken from https://www.gamehouse.com/blog/leet-speak-cheat-sheet/
@@ -75,9 +75,14 @@ print("Time taken to run mangling functions: ",total_time, "seconds")
 print("Amount of passwords mangled:", len(mangled))
 
 # wanted to make it possible to see the mangled passwords too (if wanted)
-show_variants = input("Would you like to see the mangled passwords? (y/n): ")
-if show_variants == 'y':
-    for pword, variants in random_pass.items():
-        print("Mangled Passwords for ",  pword ," : ")
-        for variant in variants:
-            print(variant)
+while True:
+    show_variants = input("Would you like to see the mangled passwords? (y/n): ").strip().lower()
+    if show_variants == 'y':
+        for pword, variants in random_pass.items():
+            print("Mangled Passwords for ", pword, " ; ")
+            for variant in variants:
+                print(variant)
+        break
+    if show_variants == 'n':
+        break
+    print("Thats not a valid response please either respond with 'y' or 'n'")
