@@ -7,7 +7,7 @@ cracked = {} # dictionary that stores the cracked hashes
 with open('PasswordDictionary.txt', 'r') as file:
     pass_list = [line.strip() for line in file if line.strip()]
 
-# error handling in case file is empty or not found
+# error handling in case file is not found
 if file is None:
     print("Password dictionary file is not found.")
     exit()
